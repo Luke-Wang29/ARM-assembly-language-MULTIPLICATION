@@ -1,0 +1,51 @@
+	;REQUIREMENTS
+	;	Implement natural number multiplication using the instructions you have learned.	
+	
+	;VARIABLES
+		;r0-->the	address recorder
+		;r1-->load	the first number from 'numbers'
+		;r2-->load	the second number from 'numbers'
+		;r3-->world	counter
+		;r5-->the	final result
+		;r6-->obtain	the first bit of r1
+    
+   ;PROGRAM
+    numbers	dcd		-12, 15
+    res2		fill		4
+		adr		r0, numbers
+		ldr		r1, [r0]
+		ldr		r2, [r0,#4]
+		
+loop1
+		and		r6, r1, #0x80000000
+		teq		r6, #0x80000000        ;examine if the first number is negative
+		beq		nega          		   ;if yes, jump to nega
+		b		addition2			   ; if no, jump to addition2
+		
+nega
+		rsb		r1, r1, #0  	;in the loop, for the first number is negative, its opposite number is obtained by doing so
+		b		addition1  	; after doing so go to the addition part
+		
+addition1    					; the process of built-up method for negative numbers
+		add		r3, r3, #1	;counter
+		add		r5, r5, r2
+		cmp		r3, r1         ;compare if the addtion time equals to the first number
+		beq		exit2		;the final result needs to be converted to its opposite number as well.
+		b		addition1
+		
+addition2						; the process of built-up method for positive numbers
+		add		r3, r3, #1	;counter
+		add		r5, r5, r2
+		cmp		r3, r1         ;compare if the addtion time equals to the first number
+		beq		exit1		;the final result can be stored directly.
+		b		addition2
+		
+exit1                              ;store process for positive numbers
+		adr		r0, res2
+		str		r5, [r0]
+		end
+exit2 						;store process for negative numbers
+		rsb		r5,r5, #0		;the final result needs to be converted to its opposite number as well.
+		adr		r0, res2
+		str		r5, [r0]
+		end
